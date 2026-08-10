@@ -1,0 +1,18 @@
+{
+  "name": "tolc-quiz-app",
+  "version": "1.0.0",
+  "description": "Simulatore prova di ammissione L-19 (uso personale/familiare) - quiz da manuale di preparazione",
+  "private": true,
+  "type": "commonjs",
+  "main": "server.js",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node db/seed.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

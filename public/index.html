@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Simulazione prova d'ammissione L-19</title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-title">Simulazione prova d'ammissione &middot; L-19 Scienze dell'educazione e della formazione</div>
+  <div id="timer" class="timer hidden">60:00</div>
+</header>
+
+<main id="app">
+
+  <!-- SCHERMATA INIZIALE -->
+  <section id="screen-home" class="screen">
+    <div class="card home-card">
+      <h1>Simulazione prova d'ammissione</h1>
+      <p>60 quesiti a risposta multipla, estratti a caso dal database di preparazione.</p>
+      <ul class="rules">
+        <li>Tempo a disposizione: <strong>60 minuti</strong></li>
+        <li>Risposta esatta: <strong>+1</strong> punto</li>
+        <li>Risposta errata: <strong>&minus;0,25</strong> punti</li>
+        <li>Risposta non data: <strong>0</strong> punti</li>
+        <li>Punteggio finale in sessantesimi</li>
+      </ul>
+      <button id="btn-start" class="btn btn-primary">Inizia simulazione</button>
+      <p id="home-error" class="error hidden"></p>
+    </div>
+  </section>
+
+  <!-- SCHERMATA ESAME -->
+  <section id="screen-exam" class="screen hidden">
+    <div class="exam-layout">
+      <nav id="question-nav" class="question-nav"></nav>
+      <div class="exam-main">
+        <div class="question-card">
+          <div class="question-meta">
+            <span id="question-position"></span>
+            <span id="question-category" class="tag"></span>
+          </div>
+          <p id="question-text" class="question-text"></p>
+          <div id="question-options" class="options"></div>
+          <div class="question-actions">
+            <button id="btn-clear" class="btn btn-secondary">Lascia in bianco</button>
+          </div>
+        </div>
+        <div class="exam-footer">
+          <button id="btn-prev" class="btn btn-secondary">&larr; Precedente</button>
+          <button id="btn-next" class="btn btn-secondary">Successiva &rarr;</button>
+          <button id="btn-finish" class="btn btn-danger">Termina prova</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHERMATA REPORT -->
+  <section id="screen-report" class="screen hidden">
+    <div class="card report-summary">
+      <h1>Risultato</h1>
+      <div id="score-big" class="score-big">-- / 60</div>
+      <div class="score-breakdown">
+        <span class="ok">Corrette: <strong id="report-correct">0</strong></span>
+        <span class="ko">Errate: <strong id="report-wrong">0</strong></span>
+        <span class="blank">In bianco: <strong id="report-blank">0</strong></span>
+      </div>
+      <button id="btn-new-session" class="btn btn-primary">Nuova simulazione</button>
+    </div>
+    <div id="report-list" class="report-list"></div>
+  </section>
+
+</main>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
