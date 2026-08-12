@@ -11,6 +11,8 @@
   let currentIndex = 0;
   let timerInterval = null;
   let serverClientOffsetMs = 0; // differenza tra now del server e now del client, per un countdown corretto
+  let availableSources = []; // [{key, label, count}], caricate da GET /api/sources
+  let selectedSources = new Set(); // chiavi selezionate dall'utente; vuoto = "tutte" solo prima del caricamento
 
   function showScreen(name) {
     Object.entries(screens).forEach(([key, el]) => el.classList.toggle('hidden', key !== name));
@@ -36,12 +38,63 @@
     return data;
   }
 
+  // ---------- Home: selezione fonte quiz ----------
+  async function loadSources() {
+    const listEl = document.getElementById('source-list');
+    try {
+      const data = await api('/api/sources');
+      availableSources = data.sources || [];
+      // Di default sono tutte selezionate (comportamento equivalente a "tutte le fonti").
+      selectedSources = new Set(availableSources.map((s) => s.key));
+      renderSources();
+    } catch (e) {
+      listEl.innerHTML = '';
+      availableSources = [];
+    }
+  }
+
+  function renderSources() {
+    const listEl = document.getElementById('source-list');
+    listEl.innerHTML = '';
+    availableSources.forEach((s) => {
+      const label = document.createElement('label');
+      label.className = 'source-option';
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = selectedSources.has(s.key);
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) selectedSources.add(s.key);
+        else selectedSources.delete(s.key);
+      });
+      const span = document.createElement('span');
+      span.textContent = `${s.label} (${s.count})`;
+      label.appendChild(checkbox);
+      label.appendChild(span);
+      listEl.appendChild(label);
+    });
+  }
+
   // ---------- Home ----------
   document.getElementById('btn-start').addEventListener('click', async () => {
     const errEl = document.getElementById('home-error');
+    const srcErrEl = document.getElementById('source-error');
     errEl.classList.add('hidden');
+    srcErrEl.classList.add('hidden');
+
+    if (availableSources.length && selectedSources.size === 0) {
+      srcErrEl.textContent = 'Seleziona almeno una fonte di quiz.';
+      srcErrEl.classList.remove('hidden');
+      return;
+    }
+
+    // Se sono selezionate tutte le fonti disponibili, non serve inviare il filtro.
+    const allSelected = availableSources.length > 0 && selectedSources.size === availableSources.length;
+    const body = allSelected || !availableSources.length
+      ? {}
+      : { sources: Array.from(selectedSources) };
+
     try {
-      const data = await api('/api/sessions', { method: 'POST' });
+      const data = await api('/api/sessions', { method: 'POST', body: JSON.stringify(body) });
       sessionId = String(data.id);
       localStorage.setItem('tolc_session_id', sessionId);
       await loadSession();
@@ -260,6 +313,7 @@
 
   // ---------- Avvio ----------
   async function init() {
+    await loadSources();
     if (sessionId) {
       try {
         await loadSession();
