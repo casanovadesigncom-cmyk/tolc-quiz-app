@@ -30,6 +30,33 @@ if (questionCount === 0) {
 }
 
 const app = express();
+
+// Protezione con password (HTTP Basic Auth), opzionale: attiva solo se APP_USERNAME e
+// APP_PASSWORD sono impostate come variabili d'ambiente. Se non impostate, l'app resta
+// pubblica (utile per lo sviluppo/test in locale).
+const APP_USERNAME = process.env.APP_USERNAME;
+const APP_PASSWORD = process.env.APP_PASSWORD;
+if (APP_USERNAME && APP_PASSWORD) {
+  app.use((req, res, next) => {
+    const header = req.headers.authorization || '';
+    const [scheme, encoded] = header.split(' ');
+    if (scheme === 'Basic' && encoded) {
+      const decoded = Buffer.from(encoded, 'base64').toString('utf-8');
+      const sepIndex = decoded.indexOf(':');
+      const user = decoded.slice(0, sepIndex);
+      const pass = decoded.slice(sepIndex + 1);
+      if (user === APP_USERNAME && pass === APP_PASSWORD) {
+        return next();
+      }
+    }
+    res.set('WWW-Authenticate', 'Basic realm="Simulazione L-19"');
+    res.status(401).send('Accesso protetto: username e password richiesti.');
+  });
+  console.log('Protezione con password attiva (APP_USERNAME/APP_PASSWORD impostate).');
+} else {
+  console.log('Nessuna protezione con password: APP_USERNAME/APP_PASSWORD non impostate.');
+}
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 

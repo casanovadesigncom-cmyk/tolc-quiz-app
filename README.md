@@ -25,6 +25,21 @@ più tra manuale, Udine, Padova, materiale aggiuntivo): di default sono tutte se
 permette, ad esempio, di fare una prova usando solo le domande più vicine al bando ufficiale di
 Padova (fonti "Padova" + "materiale aggiuntivo").
 
+### Protezione con password (opzionale)
+
+L'app supporta una protezione opzionale con username e password (HTTP Basic Auth), utile perché
+l'URL pubblico su Render è raggiungibile da chiunque abbia il link. Per attivarla basta impostare
+due variabili d'ambiente prima di avviare il server:
+
+```bash
+APP_USERNAME=tuoutente APP_PASSWORD=tuapassword npm start
+```
+
+Se queste variabili non sono impostate, l'app resta accessibile senza password (comportamento di
+default, comodo per lo sviluppo in locale). Su Render, `render.yaml` dichiara già le due chiavi
+`APP_USERNAME` e `APP_PASSWORD` (senza valore, `sync: false`): vanno impostate manualmente nella
+dashboard Render, in **Environment**, così restano private e non finiscono su GitHub.
+
 ## Struttura del progetto
 
 ```
