@@ -17,7 +17,7 @@ function seed() {
   }
 
   const insertQuestion = db.prepare(
-    'INSERT INTO questions (source_number, category, text) VALUES (@source_number, @category, @text)'
+    'INSERT INTO questions (source_number, source, category, text, explanation) VALUES (@source_number, @source, @category, @text, @explanation)'
   );
   const insertOption = db.prepare(
     'INSERT INTO options (question_id, letter, text, is_correct) VALUES (@question_id, @letter, @text, @is_correct)'
@@ -30,8 +30,10 @@ function seed() {
       for (const q of items) {
         const info = insertQuestion.run({
           source_number: q.source_number ?? null,
+          source: q.source || 'manuale',
           category: q.category,
           text: q.text,
+          explanation: q.explanation ?? null,
         });
         const questionId = info.lastInsertRowid;
         for (const opt of q.options) {

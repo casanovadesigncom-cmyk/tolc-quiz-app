@@ -3,6 +3,7 @@
 CREATE TABLE IF NOT EXISTS questions (
   id            INTEGER PRIMARY KEY AUTOINCREMENT,
   source_number INTEGER,              -- numero originale nel manuale (riferimento/debug)
+  source        TEXT NOT NULL DEFAULT 'manuale', -- fonte del quiz: manuale | udine | padova | nuovi
   category      TEXT NOT NULL,        -- categoria estratta dal manuale (es. "Logica numerica")
   topic_area    TEXT,                 -- riservato per il futuro: una delle 5 aree del bando
   text          TEXT NOT NULL,
@@ -53,3 +54,4 @@ CREATE TABLE IF NOT EXISTS answers (
 CREATE INDEX IF NOT EXISTS idx_options_question ON options(question_id);
 CREATE INDEX IF NOT EXISTS idx_sessionq_session ON session_questions(session_id);
 CREATE INDEX IF NOT EXISTS idx_answers_session ON answers(session_id);
+CREATE INDEX IF NOT EXISTS idx_questions_source ON questions(source);
