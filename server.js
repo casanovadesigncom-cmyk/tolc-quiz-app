@@ -12,6 +12,14 @@ const POINTS_CORRECT = 1;
 const POINTS_WRONG = -0.25;
 const POINTS_BLANK = 0;
 
+const SOURCE_LABELS = {
+  manuale: 'Manuale di preparazione (Alpha Test)',
+  udine: 'Concorsi Scienze della Formazione Primaria (Udine)',
+  padova: 'Prove ufficiali di ammissione Padova',
+  nuovi: 'Materiale aggiuntivo per aree del bando Padova',
+};
+const VALID_SOURCES = Object.keys(SOURCE_LABELS);
+
 const db = openDb();
 
 // Seed automatico al primo avvio se il DB è vuoto
@@ -101,12 +109,39 @@ function closeSession(sessionId, atIso) {
   return db.prepare('SELECT * FROM exam_sessions WHERE id = ?').get(sessionId);
 }
 
+// --- GET /api/sources: elenco delle fonti disponibili con conteggio domande ---
+app.get('/api/sources', (req, res) => {
+  const rows = db.prepare('SELECT source, COUNT(*) AS n FROM questions GROUP BY source').all();
+  const countBySource = new Map(rows.map((r) => [r.source, r.n]));
+  const sources = VALID_SOURCES.map((key) => ({
+    key,
+    label: SOURCE_LABELS[key],
+    count: countBySource.get(key) || 0,
+  })).filter((s) => s.count > 0);
+  res.json({ sources });
+});
+
 // --- POST /api/sessions: crea una nuova simulazione con 60 domande casuali ---
 app.post('/api/sessions', (req, res) => {
-  const allIds = db.prepare('SELECT id FROM questions').all().map((r) => r.id);
+  const requestedSources = Array.isArray(req.body && req.body.sources) ? req.body.sources : null;
+  const sources = requestedSources && requestedSources.length
+    ? requestedSources.filter((s) => VALID_SOURCES.includes(s))
+    : null;
+
+  if (requestedSources && requestedSources.length && sources.length === 0) {
+    return res.status(400).json({ error: 'Nessuna fonte valida selezionata.' });
+  }
+
+  const allIds = sources
+    ? db
+        .prepare(`SELECT id FROM questions WHERE source IN (${sources.map(() => '?').join(',')})`)
+        .all(...sources)
+        .map((r) => r.id)
+    : db.prepare('SELECT id FROM questions').all().map((r) => r.id);
+
   if (allIds.length < NUM_QUESTIONS) {
     return res.status(500).json({
-      error: `Il database contiene solo ${allIds.length} domande, ne servono almeno ${NUM_QUESTIONS}.`,
+      error: `Le fonti selezionate contengono solo ${allIds.length} domande, ne servono almeno ${NUM_QUESTIONS}.`,
     });
   }
 
