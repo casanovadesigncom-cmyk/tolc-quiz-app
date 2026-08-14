@@ -17,7 +17,7 @@ npm start
 Poi apri il browser su **http://localhost:3000**.
 
 Al primo avvio il database SQLite (`quiz.sqlite`) viene creato e popolato automaticamente con le
-domande presenti in `data/questions_final.json` (**2557 quiz** completi e verificati — vedi
+domande presenti in `data/questions_final.json` (**2856 quiz** completi e verificati — vedi
 "Note sui dati" per il dettaglio delle fonti).
 
 Nella schermata iniziale è possibile scegliere quali fonti includere nella simulazione (una o
@@ -109,3 +109,9 @@ intero, dipendente da immagini/diagrammi, o senza una risposta corretta univoca 
 - **Materiale "test-nuovi"**: 660 quiz (60 + 600) già strutturati con spiegazione inclusa per ogni
   domanda, organizzati esattamente sulle 5 aree ufficiali del bando (Comprensione del testo,
   Competenza linguistica, Cultura umanistica, Ragionamento logico, Cultura scientifica).
+- **"L19-gemini"**: 299 quiz a 5 opzioni con spiegazione, su cultura generale, comprensione del
+  testo, storia e letteratura, ragionamento logico-matematico, cultura scientifica e alcuni
+  argomenti di pedagogia/psicologia infantile. Il documento originale (formato RTF) conteneva 300
+  quesiti; uno è stato scartato perché privo della risposta corretta nel testo sorgente. Le
+  domande sono state verificate a campione (18 su 299) per correttezza fattuale prima
+  dell'importazione.

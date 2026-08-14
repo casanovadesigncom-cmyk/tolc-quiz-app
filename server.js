@@ -17,6 +17,7 @@ const SOURCE_LABELS = {
   udine: 'Concorsi Scienze della Formazione Primaria (Udine)',
   padova: 'Prove ufficiali di ammissione Padova',
   nuovi: 'Materiale aggiuntivo per aree del bando Padova',
+  gemini: 'Quiz misti L19-gemini (cultura generale, logica, pedagogia)',
 };
 const VALID_SOURCES = Object.keys(SOURCE_LABELS);
 
